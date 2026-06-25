@@ -10,645 +10,951 @@
   🔧 GLOBAL REDIRECT URL — Change this one line to update ALL links
 ============================================================ -->
 <script>
-  const REDIRECT_URL = "https://example.com/?ref=affiliate123";
+  var REDIRECT_URL = "https://example.com/?ref=affiliate123";
   // ^^^ CHANGE THIS URL — every clickable element on the page will redirect here
 </script>
 
+<!-- Google Fonts — loaded BEFORE styles so @font-face resolves correctly -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
 <style>
-  /* ─── TOKENS ─── */
-  :root {
-    --bg:        #09090f;
-    --surface:   #111120;
-    --card:      #16162a;
-    --border:    #252545;
-    --accent:    #6c5fff;
-    --accent2:   #a78bfa;
-    --gold:      #f5c542;
-    --text:      #e8e8f0;
-    --muted:     #8888aa;
-    --white:     #ffffff;
-    --radius:    14px;
-    --radius-lg: 24px;
-    --font-head: 'Syne', sans-serif;
-    --font-body: 'Inter', sans-serif;
-  }
-
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap');
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    line-height: 1.6;
-    min-height: 100vh;
-    cursor: pointer; /* whole page is clickable */
-    user-select: none;
-  }
-
-  /* ─── GLOBAL CLICK OVERLAY ─── */
-  #click-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    cursor: pointer;
-  }
-  /* Modals and their triggers sit above the overlay */
-  .modal-backdrop, .modal-box, nav, footer { z-index: 20; }
-
-  /* ─── NAV ─── */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 clamp(16px, 5vw, 80px);
-    height: 68px;
-    background: rgba(9,9,15,0.88);
-    backdrop-filter: blur(18px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-family: var(--font-head);
-    font-size: 1.35rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    cursor: pointer;
-    position: relative;
-    z-index: 110;
-  }
-
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-    z-index: 110;
-  }
-
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-family: var(--font-body);
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .btn-ghost:hover { border-color: var(--accent); color: var(--accent2); }
-
-  .btn-primary {
-    background: var(--accent);
-    border: none;
-    color: #fff;
-    padding: 9px 22px;
-    border-radius: 8px;
-    font-family: var(--font-body);
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
-  }
-  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
-
-  /* ─── HERO ─── */
-  .hero {
-    position: relative;
-    overflow: hidden;
-    padding: clamp(80px, 12vw, 160px) clamp(16px, 5vw, 80px) clamp(60px, 8vw, 120px);
-    text-align: center;
-  }
-
-  /* ambient glow */
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -120px; left: 50%;
-    transform: translateX(-50%);
-    width: 800px; height: 500px;
-    background: radial-gradient(ellipse at center, rgba(108,95,255,0.22) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(108,95,255,0.12);
-    border: 1px solid rgba(108,95,255,0.3);
-    padding: 6px 16px;
-    border-radius: 100px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--accent2);
-    margin-bottom: 28px;
-  }
-
-  .hero-eyebrow span { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.4; transform:scale(1.4); } }
-
-  .hero-h1 {
-    font-family: var(--font-head);
-    font-size: clamp(2.4rem, 6vw, 5.2rem);
-    font-weight: 800;
-    line-height: 1.08;
-    letter-spacing: -2px;
-    color: var(--white);
-    margin-bottom: 24px;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .hero-h1 em {
-    font-style: normal;
-    background: linear-gradient(100deg, var(--accent2), var(--accent), #c084fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero-sub {
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    color: var(--muted);
-    max-width: 580px;
-    margin: 0 auto 44px;
-    font-weight: 400;
-    line-height: 1.7;
-  }
-
-  .hero-cta-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    position: relative;
-    z-index: 20;
-  }
-
-  .btn-download {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--accent);
-    color: #fff;
-    font-family: var(--font-body);
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 15px 32px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    box-shadow: 0 0 32px rgba(108,95,255,0.35);
-  }
-  .btn-download:hover { background: #7c6fff; transform: translateY(-2px); box-shadow: 0 0 48px rgba(108,95,255,0.5); }
-
-  .btn-download svg { width: 20px; height: 20px; flex-shrink: 0; }
-
-  .btn-outline-dl {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: transparent;
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 1rem;
-    font-weight: 500;
-    padding: 15px 28px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .btn-outline-dl:hover { border-color: var(--accent); color: var(--accent2); }
-
-  .hero-note {
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-top: 12px;
-  }
-
-  /* ─── TRUST BAR ─── */
-  .trust-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(24px, 5vw, 64px);
-    flex-wrap: wrap;
-    padding: 32px clamp(16px, 5vw, 80px);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .trust-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .trust-num {
-    font-family: var(--font-head);
-    font-size: clamp(1.6rem, 3vw, 2.4rem);
-    font-weight: 800;
-    color: var(--white);
-    letter-spacing: -1px;
-  }
-
-  .trust-label { font-size: 0.78rem; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
-
-  .trust-divider { width: 1px; height: 48px; background: var(--border); }
-  @media (max-width: 600px) { .trust-divider { display: none; } }
-
-  /* ─── SECTIONS ─── */
-  section { padding: clamp(60px, 8vw, 120px) clamp(16px, 5vw, 80px); }
-
-  .section-eyebrow {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent2);
-    margin-bottom: 12px;
-  }
-
-  .section-title {
-    font-family: var(--font-head);
-    font-size: clamp(1.8rem, 3.5vw, 3rem);
-    font-weight: 800;
-    color: var(--white);
-    line-height: 1.15;
-    letter-spacing: -1px;
-    margin-bottom: 16px;
-  }
-
-  .section-sub {
-    font-size: 1rem;
-    color: var(--muted);
-    max-width: 520px;
-    line-height: 1.7;
-  }
-
-  /* ─── FEATURES GRID ─── */
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-top: 56px;
-  }
-
-  .feat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 32px 28px;
-    transition: border-color 0.25s, transform 0.2s;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    z-index: 20;
-  }
-  .feat-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(108,95,255,0.07), transparent);
-    opacity: 0;
-    transition: opacity 0.25s;
-  }
-  .feat-card:hover { border-color: var(--accent); transform: translateY(-4px); }
-  .feat-card:hover::before { opacity: 1; }
-
-  .feat-icon {
-    width: 52px; height: 52px;
-    background: rgba(108,95,255,0.12);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-  }
-
-  .feat-title {
-    font-family: var(--font-head);
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 10px;
-  }
-
-  .feat-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
-
-  /* ─── AWARDS / SOCIAL PROOF ─── */
-  .awards-section {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .awards-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-
-  .awards-text { max-width: 480px; }
-
-  .award-badges {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    position: relative;
-    z-index: 20;
-  }
-  .badge:hover { border-color: var(--gold); }
-  .badge-title { font-size: 0.7rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; }
-  .badge-year { font-size: 0.75rem; color: var(--muted); }
-
-  /* ─── REVIEWS ─── */
-  .reviews-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-top: 56px;
-  }
-
-  .review-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 28px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    position: relative;
-    z-index: 20;
-  }
-  .review-card:hover { border-color: var(--accent); }
-
-  .stars { color: var(--gold); font-size: 0.9rem; margin-bottom: 12px; letter-spacing: 2px; }
-  .review-text { font-size: 0.9rem; color: var(--muted); line-height: 1.65; margin-bottom: 16px; }
-  .reviewer { font-size: 0.82rem; font-weight: 600; color: var(--text); }
-
-  /* ─── STEPS ─── */
-  .steps-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 28px;
-    margin-top: 56px;
-    counter-reset: steps;
-  }
-
-  .step-card {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    cursor: pointer;
-    position: relative;
-    z-index: 20;
-  }
-
-  .step-num {
-    font-family: var(--font-head);
-    font-size: 3rem;
-    font-weight: 800;
-    color: var(--border);
-    line-height: 1;
-  }
-
-  .step-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: var(--white); }
-  .step-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
-
-  /* ─── CTA BANNER ─── */
-  .cta-banner {
-    background: linear-gradient(135deg, rgba(108,95,255,0.18), rgba(167,139,250,0.08));
-    border: 1px solid rgba(108,95,255,0.25);
-    border-radius: var(--radius-lg);
-    padding: clamp(48px, 7vw, 80px) clamp(24px, 5vw, 72px);
-    text-align: center;
-    margin: 0 clamp(16px, 5vw, 80px) clamp(60px, 8vw, 120px);
-    cursor: pointer;
-    position: relative;
-    z-index: 20;
-    transition: border-color 0.2s;
-  }
-  .cta-banner:hover { border-color: rgba(108,95,255,0.5); }
-
-  .cta-banner h2 {
-    font-family: var(--font-head);
-    font-size: clamp(1.8rem, 3.5vw, 3rem);
-    font-weight: 800;
-    color: var(--white);
-    letter-spacing: -1px;
-    margin-bottom: 16px;
-  }
-
-  .cta-banner p { font-size: 1rem; color: var(--muted); margin-bottom: 36px; max-width: 480px; margin-left: auto; margin-right: auto; }
-
-  /* ─── FOOTER ─── */
-  footer {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 48px clamp(16px, 5vw, 80px) 32px;
-    position: relative;
-    z-index: 20;
-  }
-
-  .footer-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 40px;
-    flex-wrap: wrap;
-    margin-bottom: 40px;
-  }
-
-  .footer-brand { max-width: 320px; }
-  .footer-logo {
-    font-family: var(--font-head);
-    font-size: 1.3rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 12px;
-    cursor: pointer;
-  }
-  .footer-tagline { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
-
-  .footer-links { display: flex; gap: 40px; flex-wrap: wrap; }
-  .footer-col h4 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text); margin-bottom: 14px; }
-  .footer-col a {
-    display: block;
-    font-size: 0.875rem;
-    color: var(--muted);
-    text-decoration: none;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: color 0.2s;
-    background: none;
-    border: none;
-  }
-  .footer-col a:hover { color: var(--accent2); }
-
-  .footer-bottom {
-    border-top: 1px solid var(--border);
-    padding-top: 24px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-
-  .footer-legal-links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .footer-legal-links button {
-    background: none; border: none;
-    color: var(--muted);
-    font-size: 0.82rem;
-    cursor: pointer;
-    font-family: var(--font-body);
-    transition: color 0.2s;
-  }
-  .footer-legal-links button:hover { color: var(--accent2); }
-
-  .footer-copy { font-size: 0.82rem; color: var(--muted); }
-
-  .risk-disclaimer {
-    font-size: 0.75rem;
-    color: #55556a;
-    line-height: 1.6;
-    margin-top: 24px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-  }
-
-  /* ─── MODAL ─── */
-  .modal-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(6px);
-    z-index: 200;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 40px 16px;
-    overflow-y: auto;
-  }
-  .modal-backdrop.open { display: flex; }
-
-  .modal-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: clamp(28px, 4vw, 52px);
-    max-width: 760px;
-    width: 100%;
-    position: relative;
-    margin: auto;
-  }
-
-  .modal-close {
-    position: absolute;
-    top: 16px; right: 16px;
-    background: var(--border);
-    border: none;
-    color: var(--text);
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-    z-index: 210;
-  }
-  .modal-close:hover { background: var(--accent); }
-
-  .modal-box h2 { font-family: var(--font-head); font-size: 1.7rem; font-weight: 800; color: var(--white); margin-bottom: 8px; }
-  .modal-box .modal-date { font-size: 0.8rem; color: var(--muted); margin-bottom: 24px; }
-  .modal-box h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin: 20px 0 8px; }
-  .modal-box p { font-size: 0.875rem; color: var(--muted); line-height: 1.75; margin-bottom: 12px; }
-
-  /* ─── APP STORE BADGES ─── */
-  .store-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--white);
-    color: #000;
-    border-radius: 10px;
-    padding: 10px 18px;
-    font-family: var(--font-body);
-    cursor: pointer;
-    border: none;
-    transition: opacity 0.2s, transform 0.15s;
-    position: relative;
-    z-index: 20;
-  }
-  .store-badge:hover { opacity: 0.9; transform: translateY(-2px); }
-  .store-badge svg { width: 22px; height: 22px; }
-  .store-badge-text { display: flex; flex-direction: column; line-height: 1.2; }
-  .store-badge-text small { font-size: 0.6rem; font-weight: 400; }
-  .store-badge-text strong { font-size: 0.85rem; font-weight: 700; }
-
-  .badge-dark {
-    background: #000;
-    color: #fff;
-    border: 1px solid #333;
-  }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 768px) {
-    .awards-inner { flex-direction: column; }
-    .footer-top { flex-direction: column; }
-    .footer-bottom { flex-direction: column; gap: 12px; }
-  }
-
-  @media (max-width: 480px) {
-    .hero-cta-group { flex-direction: column; width: 100%; }
-    .btn-download, .btn-outline-dl { width: 100%; justify-content: center; }
-    .nav-right .btn-ghost { display: none; }
-  }
-
-  /* ─── SCROLL ANIMATION ─── */
-  .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.55s ease, transform 0.55s ease; }
-  .fade-up.visible { opacity: 1; transform: translateY(0); }
+/* ════════════════════════════════════════════════════════════
+   CROSS-PLATFORM RESET & BASE
+   Fixes: Mac Safari font rendering, scrollbar layout shift,
+   system font fallback chain, -webkit- prefixes, DPR scaling
+════════════════════════════════════════════════════════════ */
+
+/* 1 — Scrollbar always visible to prevent layout shift on Mac */
+html {
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;  /* prevent Safari auto font-size zoom */
+      -ms-text-size-adjust: 100%;
+}
+
+/* 2 — Universal box model */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 3 — Design tokens */
+:root {
+  --bg:        #09090f;
+  --surface:   #111120;
+  --card:      #16162a;
+  --border:    #252545;
+  --accent:    #6c5fff;
+  --accent2:   #a78bfa;
+  --gold:      #f5c542;
+  --text:      #e8e8f0;
+  --muted:     #8888aa;
+  --white:     #ffffff;
+  --radius:    14px;
+  --radius-lg: 24px;
+
+  /* Safe font stack: Google Fonts → Mac system → Windows system → generic */
+  --font-head: 'Syne', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'SF Pro Text',  'Segoe UI', system-ui, sans-serif;
+
+  /* Pixel-perfect spacing that works at all DPIs */
+  --nav-h: 68px;
+}
+
+/* 4 — Body */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  cursor: pointer;
+  -webkit-font-smoothing: antialiased;   /* Mac Retina: crisp text */
+  -moz-osx-font-smoothing: grayscale;   /* Firefox on Mac */
+  text-rendering: optimizeLegibility;
+  /* No user-select: prevents accidental text highlight but keep it for accessibility */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* ─── GLOBAL CLICK OVERLAY ─── */
+#click-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  cursor: pointer;
+}
+
+/* ════════════════════════════════════
+   NAV
+════════════════════════════════════ */
+nav {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  padding: 0 clamp(16px, 5vw, 80px);
+  height: var(--nav-h);
+  background: rgba(9,9,15,0.9);
+  -webkit-backdrop-filter: blur(18px) saturate(180%); /* Safari */
+  backdrop-filter: blur(18px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: var(--font-head);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: -webkit-linear-gradient(135deg, var(--accent2), var(--accent));
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; /* fallback when background-clip unsupported */
+  cursor: pointer;
+  position: relative;
+  z-index: 110;
+}
+
+.nav-right {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 110;
+}
+
+/* ─── Buttons — full cross-platform reset ─── */
+button, .btn-ghost, .btn-primary, .btn-download, .btn-outline-dl, .store-badge {
+  /* Kill Safari / Mac default button appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  cursor: pointer;
+  /* Prevent tap highlight on iOS */
+  -webkit-tap-highlight-color: transparent;
+  /* Pixel-crisp on Retina */
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn-ghost {
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  -webkit-transition: border-color 0.2s, color 0.2s;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent2); }
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  padding: 9px 22px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  -webkit-transition: background 0.2s, -webkit-transform 0.15s;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-primary:hover { background: var(--accent2); -webkit-transform: translateY(-1px); transform: translateY(-1px); }
+
+/* ════════════════════════════════════
+   HERO
+════════════════════════════════════ */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(80px, 12vw, 160px) clamp(16px, 5vw, 80px) clamp(60px, 8vw, 120px);
+  text-align: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width: 800px;
+  height: 500px;
+  background: radial-gradient(ellipse at center, rgba(108,95,255,0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  display: -webkit-inline-flex;
+  display: inline-flex;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 8px;
+  background: rgba(108,95,255,0.12);
+  border: 1px solid rgba(108,95,255,0.3);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 28px;
+}
+
+.hero-eyebrow span {
+  display: inline-block; /* needed on Safari for transform to work */
+  width: 6px;
+  height: 6px;
+  background: var(--accent2);
+  border-radius: 50%;
+  -webkit-animation: pulse 2s infinite;
+  animation: pulse 2s infinite;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
+
+@-webkit-keyframes pulse {
+  0%,100% { opacity:1; -webkit-transform:scale(1); transform:scale(1); }
+  50%      { opacity:0.4; -webkit-transform:scale(1.4); transform:scale(1.4); }
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.4; transform:scale(1.4); }
+}
+
+.hero-h1 {
+  font-family: var(--font-head);
+  /* clamp with px fallback for older Safari */
+  font-size: 3.6rem;
+  font-size: clamp(2.4rem, 6vw, 5.2rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -2px;
+  color: var(--white);
+  margin: 0 auto 24px;
+  max-width: 900px;
+}
+
+/* Mac/Safari: gradient text needs all 3 declarations */
+.hero-h1 em {
+  font-style: normal;
+  background: -webkit-linear-gradient(100deg, var(--accent2), var(--accent), #c084fc);
+  background: linear-gradient(100deg, var(--accent2), var(--accent), #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-sub {
+  font-size: 1rem;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--muted);
+  max-width: 580px;
+  margin: 0 auto 44px;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.hero-cta-group {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  gap: 14px;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 20;
+}
+
+.btn-download {
+  display: -webkit-inline-flex;
+  display: inline-flex;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 15px 32px;
+  border-radius: 12px;
+  -webkit-transition: background 0.2s, -webkit-transform 0.15s, box-shadow 0.2s;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 0 32px rgba(108,95,255,0.35);
+  white-space: nowrap; /* prevent line-break on Mac narrow viewport */
+}
+.btn-download:hover {
+  background: #7c6fff;
+  -webkit-transform: translateY(-2px);
+  transform: translateY(-2px);
+  box-shadow: 0 0 48px rgba(108,95,255,0.5);
+}
+
+.btn-download svg { width: 20px; height: 20px; -webkit-flex-shrink: 0; flex-shrink: 0; }
+
+.btn-outline-dl {
+  display: -webkit-inline-flex;
+  display: inline-flex;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 15px 28px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  -webkit-transition: border-color 0.2s, color 0.2s;
+  transition: border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.btn-outline-dl:hover { border-color: var(--accent); color: var(--accent2); }
+
+.hero-note { font-size: 0.8rem; color: var(--muted); margin-top: 12px; }
+
+/* ════════════════════════════════════
+   TRUST BAR
+════════════════════════════════════ */
+.trust-bar {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  gap: clamp(24px, 5vw, 64px);
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding: 32px clamp(16px, 5vw, 80px);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.trust-item {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.trust-num {
+  font-family: var(--font-head);
+  font-size: 2rem;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -1px;
+  /* Force consistent rendering on Mac */
+  -webkit-font-smoothing: antialiased;
+}
+
+.trust-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.trust-divider { width: 1px; height: 48px; background: var(--border); }
+
+/* ════════════════════════════════════
+   SECTIONS
+════════════════════════════════════ */
+section {
+  padding: clamp(60px, 8vw, 120px) clamp(16px, 5vw, 80px);
+}
+
+.section-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-head);
+  font-size: 2.2rem;
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.15;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+
+.section-sub {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 520px;
+  line-height: 1.7;
+}
+
+/* ════════════════════════════════════
+   FEATURES GRID
+════════════════════════════════════ */
+.features-grid {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 56px;
+}
+
+/* Explicit flex basis = same look on all OS */
+.feat-card {
+  -webkit-flex: 1 1 280px;
+  flex: 1 1 280px;
+  max-width: calc(33.333% - 14px);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  -webkit-transition: border-color 0.25s, -webkit-transform 0.2s;
+  transition: border-color 0.25s, transform 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 20;
+}
+
+.feat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: -webkit-linear-gradient(135deg, rgba(108,95,255,0.07), transparent);
+  background: linear-gradient(135deg, rgba(108,95,255,0.07), transparent);
+  opacity: 0;
+  -webkit-transition: opacity 0.25s;
+  transition: opacity 0.25s;
+}
+.feat-card:hover { border-color: var(--accent); -webkit-transform: translateY(-4px); transform: translateY(-4px); }
+.feat-card:hover::before { opacity: 1; }
+
+.feat-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(108,95,255,0.12);
+  border-radius: 12px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  /* Fix emoji rendering on Mac — forces emoji font */
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.feat-title {
+  font-family: var(--font-head);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+
+.feat-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
+
+/* ════════════════════════════════════
+   AWARDS
+════════════════════════════════════ */
+.awards-section {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.awards-inner {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  gap: 40px;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.awards-text { max-width: 480px; }
+
+.award-badges {
+  display: -webkit-flex;
+  display: flex;
+  gap: 16px;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.badge {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  -webkit-transition: border-color 0.2s;
+  transition: border-color 0.2s;
+  position: relative;
+  z-index: 20;
+}
+.badge:hover { border-color: var(--gold); }
+.badge-title { font-size: 0.7rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; }
+.badge-year { font-size: 0.75rem; color: var(--muted); }
+
+/* ════════════════════════════════════
+   REVIEWS
+════════════════════════════════════ */
+.reviews-grid {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 56px;
+}
+
+.review-card {
+  -webkit-flex: 1 1 280px;
+  flex: 1 1 280px;
+  max-width: calc(33.333% - 14px);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  cursor: pointer;
+  -webkit-transition: border-color 0.2s;
+  transition: border-color 0.2s;
+  position: relative;
+  z-index: 20;
+}
+.review-card:hover { border-color: var(--accent); }
+
+.stars {
+  color: var(--gold);
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+  /* Fix star rendering on Mac */
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+.review-text { font-size: 0.9rem; color: var(--muted); line-height: 1.65; margin-bottom: 16px; }
+.reviewer { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+
+/* ════════════════════════════════════
+   STEPS
+════════════════════════════════════ */
+.steps-grid {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin-top: 56px;
+}
+
+.step-card {
+  -webkit-flex: 1 1 220px;
+  flex: 1 1 220px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  gap: 14px;
+  cursor: pointer;
+  position: relative;
+  z-index: 20;
+}
+
+.step-num {
+  font-family: var(--font-head);
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--border);
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.step-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: var(--white); }
+.step-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+
+/* ════════════════════════════════════
+   CTA BANNER
+════════════════════════════════════ */
+.cta-banner {
+  background: -webkit-linear-gradient(135deg, rgba(108,95,255,0.18), rgba(167,139,250,0.08));
+  background: linear-gradient(135deg, rgba(108,95,255,0.18), rgba(167,139,250,0.08));
+  border: 1px solid rgba(108,95,255,0.25);
+  border-radius: var(--radius-lg);
+  padding: clamp(48px, 7vw, 80px) clamp(24px, 5vw, 72px);
+  text-align: center;
+  margin: 0 clamp(16px, 5vw, 80px) clamp(60px, 8vw, 120px);
+  cursor: pointer;
+  position: relative;
+  z-index: 20;
+  -webkit-transition: border-color 0.2s;
+  transition: border-color 0.2s;
+}
+.cta-banner:hover { border-color: rgba(108,95,255,0.5); }
+
+.cta-banner h2 {
+  font-family: var(--font-head);
+  font-size: 2.2rem;
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+
+.cta-banner p {
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 0 auto 36px;
+  max-width: 480px;
+}
+
+/* ════════════════════════════════════
+   FOOTER
+════════════════════════════════════ */
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 48px clamp(16px, 5vw, 80px) 32px;
+  position: relative;
+  z-index: 20;
+}
+
+.footer-top {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  gap: 40px;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.footer-brand { max-width: 320px; }
+
+.footer-logo {
+  font-family: var(--font-head);
+  font-size: 1.3rem;
+  font-weight: 800;
+  background: -webkit-linear-gradient(135deg, var(--accent2), var(--accent));
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 12px;
+  cursor: pointer;
+  display: inline-block; /* Safari: gradient-text needs block context */
+}
+
+.footer-tagline { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+.footer-links {
+  display: -webkit-flex;
+  display: flex;
+  gap: 40px;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.footer-col h4 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+.footer-col a {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-decoration: none;
+  margin-bottom: 8px;
+  cursor: pointer;
+  -webkit-transition: color 0.2s;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+  text-align: left;
+}
+.footer-col a:hover { color: var(--accent2); }
+
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  gap: 20px;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.footer-legal-links {
+  display: -webkit-flex;
+  display: flex;
+  gap: 20px;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.footer-legal-links button {
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+  padding: 0;
+  -webkit-transition: color 0.2s;
+  transition: color 0.2s;
+}
+.footer-legal-links button:hover { color: var(--accent2); }
+
+.footer-copy { font-size: 0.82rem; color: var(--muted); }
+
+.risk-disclaimer {
+  font-size: 0.75rem;
+  color: #55556a;
+  line-height: 1.6;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+/* ════════════════════════════════════
+   APP STORE BADGES
+════════════════════════════════════ */
+.store-badges-row {
+  display: -webkit-flex;
+  display: flex;
+  gap: 16px;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 20;
+}
+
+.store-badge {
+  display: -webkit-inline-flex;
+  display: inline-flex;
+  -webkit-align-items: center;
+  align-items: center;
+  gap: 10px;
+  background: #000;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 18px;
+  border: 1px solid #333;
+  -webkit-transition: opacity 0.2s, -webkit-transform 0.15s;
+  transition: opacity 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+.store-badge:hover { opacity: 0.85; -webkit-transform: translateY(-2px); transform: translateY(-2px); }
+.store-badge svg { width: 22px; height: 22px; -webkit-flex-shrink: 0; flex-shrink: 0; }
+
+.store-badge-text {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  line-height: 1.2;
+  text-align: left;
+}
+.store-badge-text small { font-size: 0.6rem; font-weight: 400; opacity: 0.8; }
+.store-badge-text strong { font-size: 0.85rem; font-weight: 700; }
+
+/* ════════════════════════════════════
+   MODAL
+════════════════════════════════════ */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  -webkit-justify-content: center;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+  /* Prevent outer page scroll when modal open */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch; /* smooth scroll on iOS */
+}
+.modal-backdrop.open { display: -webkit-flex; display: flex; }
+
+.modal-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(28px, 4vw, 52px);
+  max-width: 760px;
+  width: 100%;
+  position: relative;
+  margin: auto;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--border);
+  color: var(--text);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-transition: background 0.2s;
+  transition: background 0.2s;
+  z-index: 210;
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  font-family: var(--font-body);
+  line-height: 1;
+}
+.modal-close:hover { background: var(--accent); }
+
+.modal-box h2 {
+  font-family: var(--font-head);
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 8px;
+  -webkit-font-smoothing: antialiased;
+}
+.modal-box .modal-date { font-size: 0.8rem; color: var(--muted); margin-bottom: 24px; }
+.modal-box h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin: 20px 0 8px; }
+.modal-box p { font-size: 0.875rem; color: var(--muted); line-height: 1.75; margin-bottom: 12px; }
+
+/* ════════════════════════════════════
+   SCROLL ANIMATION
+════════════════════════════════════ */
+.fade-up {
+  opacity: 0;
+  -webkit-transform: translateY(28px);
+  transform: translateY(28px);
+  -webkit-transition: opacity 0.55s ease, -webkit-transform 0.55s ease;
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+}
+
+/* ════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+════════════════════════════════════ */
+
+/* Tablet: ≤1024px — collapse 3-col to 2-col */
+@media (max-width: 1024px) {
+  .feat-card   { max-width: calc(50% - 10px); }
+  .review-card { max-width: calc(50% - 10px); }
+}
+
+/* Awards stack on tablet */
+@media (max-width: 900px) {
+  .awards-inner { -webkit-flex-direction: column; flex-direction: column; }
+  .award-badges { -webkit-justify-content: flex-start; justify-content: flex-start; }
+}
+
+/* Mobile: ≤640px — single column */
+@media (max-width: 640px) {
+  .feat-card   { max-width: 100%; -webkit-flex: 1 1 100%; flex: 1 1 100%; }
+  .review-card { max-width: 100%; -webkit-flex: 1 1 100%; flex: 1 1 100%; }
+  .step-card   { -webkit-flex: 1 1 100%; flex: 1 1 100%; }
+  .trust-divider { display: none; }
+  .hero-cta-group { -webkit-flex-direction: column; flex-direction: column; width: 100%; }
+  .btn-download, .btn-outline-dl { width: 100%; -webkit-justify-content: center; justify-content: center; }
+  .nav-right .btn-ghost { display: none; }
+  .footer-top { -webkit-flex-direction: column; flex-direction: column; }
+  .footer-bottom { -webkit-flex-direction: column; flex-direction: column; gap: 12px; }
+}
+
+/* Mac Retina / HiDPI refinement */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  body { -webkit-font-smoothing: antialiased; }
+  .trust-num, .section-title, .hero-h1 { -webkit-font-smoothing: antialiased; }
+}
+
+/* Respect reduced-motion preference (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { opacity: 1; -webkit-transform: none; transform: none; -webkit-transition: none; transition: none; }
+  .hero-eyebrow span { -webkit-animation: none; animation: none; }
+  * { -webkit-transition: none !important; transition: none !important; }
+}
+
 </style>
 </head>
 
@@ -657,7 +963,7 @@
 <!-- GLOBAL CLICK OVERLAY — redirects all page clicks -->
 <div id="click-overlay" onclick="goToAffiliate()"></div>
 
-<!-- ───────────────── NAV ───────────────── -->
+<!-- ─────────────────── NAV ─────────────────── -->
 <nav>
   <div class="nav-logo" onclick="goToAffiliate()">FinEdge Pro</div>
   <div class="nav-right">
@@ -666,7 +972,7 @@
   </div>
 </nav>
 
-<!-- ───────────────── HERO ───────────────── -->
+<!-- ─────────────────── HERO ─────────────────── -->
 <section class="hero">
   <div class="hero-eyebrow"><span></span> Trusted by 3M+ users worldwide</div>
   <h1 class="hero-h1">Your Financial Edge,<br /><em>In Your Pocket</em></h1>
@@ -674,17 +980,13 @@
   <div class="hero-cta-group">
     <button class="btn-download" onclick="goToAffiliate()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13M7 11l5 5 5-5"/><path d="M3 21h18"/></svg>
-      Download Free App
-    </button>
-    <button class="btn-outline-dl" onclick="goToAffiliate()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-      Watch How It Works
+      Download App
     </button>
   </div>
-  <p class="hero-note">Free to download · Available on iOS & Android · No credit card required</p>
+  <p class="hero-note">Free to download &nbsp;·&nbsp; Available on iOS &amp; Android &nbsp;·&nbsp; No credit card required</p>
 </section>
 
-<!-- ───────────────── TRUST BAR ───────────────── -->
+<!-- ─────────────────── TRUST BAR ─────────────────── -->
 <div class="trust-bar fade-up">
   <div class="trust-item"><span class="trust-num">3M+</span><span class="trust-label">Customers Worldwide</span></div>
   <div class="trust-divider"></div>
@@ -695,7 +997,7 @@
   <div class="trust-item"><span class="trust-num">25+</span><span class="trust-label">Years of Trust</span></div>
 </div>
 
-<!-- ───────────────── FEATURES ───────────────── -->
+<!-- ─────────────────── FEATURES ─────────────────── -->
 <section id="features">
   <div class="section-eyebrow fade-up">Why choose us</div>
   <h2 class="section-title fade-up">Everything you need,<br />nothing you don't</h2>
@@ -714,7 +1016,7 @@
     </div>
     <div class="feat-card fade-up" onclick="goToAffiliate()">
       <div class="feat-icon">🔒</div>
-      <div class="feat-title">Secure & Regulated</div>
+      <div class="feat-title">Secure &amp; Regulated</div>
       <p class="feat-desc">Multi-regulated across global jurisdictions with top-tier encryption and partnerships with leading international banks.</p>
     </div>
     <div class="feat-card fade-up" onclick="goToAffiliate()">
@@ -735,7 +1037,7 @@
   </div>
 </section>
 
-<!-- ───────────────── AWARDS ───────────────── -->
+<!-- ─────────────────── AWARDS ─────────────────── -->
 <section class="awards-section">
   <div class="awards-inner fade-up">
     <div class="awards-text">
@@ -744,27 +1046,15 @@
       <p class="section-sub">Recognised by the world's leading financial industry bodies for excellence, trust, and outstanding user experience.</p>
     </div>
     <div class="award-badges">
-      <div class="badge" onclick="goToAffiliate()">
-        <span class="badge-title">Best Broker — Africa</span>
-        <span class="badge-year">Global Forex Awards 2025</span>
-      </div>
-      <div class="badge" onclick="goToAffiliate()">
-        <span class="badge-title">Best Trading Experience</span>
-        <span class="badge-year">Ultimate Fintech 2025</span>
-      </div>
-      <div class="badge" onclick="goToAffiliate()">
-        <span class="badge-title">Best Trading Conditions</span>
-        <span class="badge-year">Finance Magnates 2025</span>
-      </div>
-      <div class="badge" onclick="goToAffiliate()">
-        <span class="badge-title">Best Trade Execution</span>
-        <span class="badge-year">MEA — Ultimate Fintech 2026</span>
-      </div>
+      <div class="badge" onclick="goToAffiliate()"><span class="badge-title">Best Broker — Africa</span><span class="badge-year">Global Forex Awards 2025</span></div>
+      <div class="badge" onclick="goToAffiliate()"><span class="badge-title">Best Trading Experience</span><span class="badge-year">Ultimate Fintech 2025</span></div>
+      <div class="badge" onclick="goToAffiliate()"><span class="badge-title">Best Trading Conditions</span><span class="badge-year">Finance Magnates 2025</span></div>
+      <div class="badge" onclick="goToAffiliate()"><span class="badge-title">Best Trade Execution</span><span class="badge-year">MEA — Ultimate Fintech 2026</span></div>
     </div>
   </div>
 </section>
 
-<!-- ───────────────── HOW IT WORKS ───────────────── -->
+<!-- ─────────────────── HOW IT WORKS ─────────────────── -->
 <section id="how">
   <div class="section-eyebrow fade-up">Getting started</div>
   <h2 class="section-title fade-up">Up and running<br />in minutes</h2>
@@ -789,7 +1079,7 @@
   </div>
 </section>
 
-<!-- ───────────────── REVIEWS ───────────────── -->
+<!-- ─────────────────── REVIEWS ─────────────────── -->
 <section id="reviews" style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
   <div class="section-eyebrow fade-up">User Reviews</div>
   <h2 class="section-title fade-up">Loved by millions<br />around the world</h2>
@@ -818,7 +1108,7 @@
     </div>
     <div class="review-card fade-up" onclick="goToAffiliate()">
       <div class="stars">★★★★★</div>
-      <p class="review-text">"Fast payments, superb diversity of options, and an interface that just works. Payments are quick and I love the variety of available tools."</p>
+      <p class="review-text">"Fast payments, superb diversity of options, and an interface that just works. I love the variety of available tools."</p>
       <div class="reviewer">Philip S.</div>
     </div>
     <div class="review-card fade-up" onclick="goToAffiliate()">
@@ -829,39 +1119,39 @@
   </div>
 </section>
 
-<!-- ───────────────── APP DOWNLOAD ───────────────── -->
+<!-- ─────────────────── APP DOWNLOAD ─────────────────── -->
 <section id="download" style="text-align:center;">
   <div class="section-eyebrow fade-up">Download Now</div>
   <h2 class="section-title fade-up" style="margin:0 auto 16px; max-width:600px;">Take the platform<br />everywhere you go</h2>
-  <p class="section-sub fade-up" style="margin: 0 auto 44px;">One app. All markets. All the time. Free to download on iOS and Android.</p>
+  <p class="section-sub fade-up" style="margin: 0 auto 44px;">One app. All markets. All the time. </p>
 
-  <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; position:relative; z-index:20;" class="fade-up">
-    <button class="store-badge badge-dark" onclick="goToAffiliate()">
+  <div class="store-badges-row fade-up">
+    <button class="store-badge" onclick="goToAffiliate()">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
       <div class="store-badge-text"><small>Download on the</small><strong>App Store</strong></div>
     </button>
-    <button class="store-badge badge-dark" onclick="goToAffiliate()">
+    <button class="store-badge" onclick="goToAffiliate()">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.98.14l12.56-7.25-2.84-2.84-10.7 9.95zm15.22-9.04L15.8 12l2.6-2.72L21.49 12l-3.09 2.72zM2.5.54C2.18.72 2 1.06 2 1.5v21c0 .44.18.78.5.96l.1.06 11.76-11.76v-.28L2.5.54zm12.94 12.1l-2.98-2.98L2.5.54l12.94 12.1z"/></svg>
       <div class="store-badge-text"><small>Get it on</small><strong>Google Play</strong></div>
     </button>
   </div>
 
-  <p style="margin-top:16px; font-size:0.8rem; color:var(--muted); position:relative; z-index:20;" class="fade-up">
-    4.3 ★ out of 5 · Based on 71,887 reviews
+  <p class="fade-up" style="margin-top:16px; font-size:0.8rem; color:var(--muted); position:relative; z-index:20;">
+    4.3 ★ out of 5 &nbsp;·&nbsp; Based on 71,887 reviews
   </p>
 </section>
 
-<!-- ───────────────── CTA BANNER ───────────────── -->
+<!-- ─────────────────── CTA BANNER ─────────────────── -->
 <div class="cta-banner fade-up" onclick="goToAffiliate()">
   <h2>Ready to get started?</h2>
   <p>Join over 3 million users who access global financial markets every day — free, fast, and from anywhere.</p>
   <button class="btn-download" onclick="goToAffiliate()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13M7 11l5 5 5-5"/><path d="M3 21h18"/></svg>
-    Download the App — It's Free
+    Download the App
   </button>
 </div>
 
-<!-- ───────────────── FOOTER ───────────────── -->
+<!-- ─────────────────── FOOTER ─────────────────── -->
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
@@ -885,197 +1175,186 @@
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
-        <a onclick="openModal('privacy')">Privacy Policy</a>
-        <a onclick="openModal('terms')">Terms &amp; Conditions</a>
-        <a onclick="openModal('disclaimer')">Disclaimer</a>
+        <a onclick="openModal(event,'privacy')">Privacy Policy</a>
+        <a onclick="openModal(event,'terms')">Terms &amp; Conditions</a>
+        <a onclick="openModal(event,'disclaimer')">Disclaimer</a>
       </div>
     </div>
   </div>
 
   <div class="footer-bottom">
     <div class="footer-legal-links">
-      <button onclick="openModal('privacy')">Privacy Policy</button>
-      <button onclick="openModal('terms')">Terms &amp; Conditions</button>
-      <button onclick="openModal('disclaimer')">Disclaimer</button>
+      <button onclick="openModal(event,'privacy')">Privacy Policy</button>
+      <button onclick="openModal(event,'terms')">Terms &amp; Conditions</button>
+      <button onclick="openModal(event,'disclaimer')">Disclaimer</button>
     </div>
-    <div class="footer-copy">© 2025 FinEdge Pro. All rights reserved.</div>
+    <div class="footer-copy">&copy; 2025 FinEdge Pro. All rights reserved.</div>
   </div>
 
   <p class="risk-disclaimer">
-    <strong>Risk Warning:</strong> The information on this website is for general informational purposes only and does not constitute financial, investment, or legal advice. Past performance is not indicative of future results. All financial products involve risk, and you may lose more than your initial investment. Leveraged products carry a high degree of risk and may not be suitable for all individuals. Please ensure you fully understand the risks involved before using any financial platform or service. This page may contain affiliate links; we may receive compensation if you click through and sign up with a partner service. Please read all terms, conditions, and risk disclosures on the platform's official website before making any decisions.
+    <strong>Risk Warning:</strong> The information on this website is for general informational purposes only and does not constitute financial, investment, or legal advice. Past performance is not indicative of future results. All financial products involve risk and you may lose more than your initial investment. Leveraged products carry a high degree of risk and may not be suitable for all individuals. Please ensure you fully understand the risks before using any financial platform or service. This page may contain affiliate links; we may receive compensation if you click through and sign up with a partner service. Please read all terms, conditions, and risk disclosures on the platform's official website before making any decisions.
   </p>
 </footer>
 
-<!-- ═══════════════ MODALS ═══════════════ -->
-
-<!-- PRIVACY POLICY -->
-<div class="modal-backdrop" id="modal-privacy">
+<!-- ═══════════════ MODAL: PRIVACY POLICY ═══════════════ -->
+<div class="modal-backdrop" id="modal-privacy" role="dialog" aria-modal="true" aria-labelledby="mp-title">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('privacy')">✕</button>
-    <h2>Privacy Policy</h2>
+    <button class="modal-close" onclick="closeModal(event,'privacy')" aria-label="Close">&#x2715;</button>
+    <h2 id="mp-title">Privacy Policy</h2>
     <p class="modal-date">Last updated: 25 June 2025</p>
-
     <h3>1. Information We Collect</h3>
-    <p>We collect information you provide directly, such as your name, email address, and usage data when you interact with this website. We may also collect technical data such as IP address, browser type, device information, and cookies automatically when you visit.</p>
-
+    <p>We collect information you provide directly, such as your name and email address, and usage data when you interact with this website. We may also collect technical data such as IP address, browser type, device information, and cookies automatically when you visit.</p>
     <h3>2. How We Use Your Information</h3>
-    <p>We use the information to operate and improve this website, to send you relevant communications if you have opted in, and to comply with legal obligations. We do not sell your personal data to third parties.</p>
-
+    <p>We use the information to operate and improve this website, to send relevant communications if you have opted in, and to comply with legal obligations. We do not sell your personal data to third parties.</p>
     <h3>3. Cookies</h3>
-    <p>This website uses cookies to enhance your browsing experience, analyse site traffic, and personalise content. You may disable cookies in your browser settings; however, some features of this website may not function properly as a result.</p>
-
+    <p>This website uses cookies to enhance your browsing experience, analyse site traffic, and personalise content. You may disable cookies in your browser settings; however, some features may not function properly as a result.</p>
     <h3>4. Third-Party Links</h3>
-    <p>This website contains affiliate links to third-party platforms. When you click these links, you will be directed to an external website. We are not responsible for the privacy practices or content of those external sites. We encourage you to review their respective privacy policies.</p>
-
+    <p>This website contains affiliate links to third-party platforms. When you click these links, you will be directed to an external website. We are not responsible for the privacy practices of those external sites. We encourage you to review their respective privacy policies.</p>
     <h3>5. Data Security</h3>
-    <p>We implement commercially reasonable technical and organisational measures to protect your personal data from unauthorised access, loss, or disclosure. However, no method of internet transmission is completely secure, and we cannot guarantee absolute security.</p>
-
+    <p>We implement commercially reasonable technical and organisational measures to protect your personal data from unauthorised access, loss, or disclosure. However, no internet transmission is completely secure.</p>
     <h3>6. Your Rights</h3>
-    <p>Depending on your jurisdiction, you may have rights to access, correct, delete, or object to the processing of your personal data. To exercise these rights, please contact us via the details provided on this website.</p>
-
+    <p>Depending on your jurisdiction, you may have rights to access, correct, delete, or object to the processing of your personal data. To exercise these rights, please contact us via the details on this website.</p>
     <h3>7. Changes to This Policy</h3>
-    <p>We may update this Privacy Policy from time to time. We will notify you of significant changes by posting the new policy on this page with an updated date. Continued use of this website after changes constitutes your acceptance of the revised policy.</p>
-
+    <p>We may update this Privacy Policy from time to time. We will notify you of significant changes by posting the new policy on this page with an updated date. Continued use constitutes acceptance of the revised policy.</p>
     <h3>8. Contact Us</h3>
-    <p>If you have any questions about this Privacy Policy, please contact us through the support channels listed on our website.</p>
-
+    <p>If you have questions about this Privacy Policy, please contact us through the support channels listed on our website.</p>
     <div style="margin-top:28px; text-align:center;">
-      <button class="btn-primary" onclick="closeModal('privacy')">I Understand</button>
+      <button class="btn-primary" onclick="closeModal(event,'privacy')">I Understand</button>
     </div>
   </div>
 </div>
 
-<!-- TERMS & CONDITIONS -->
-<div class="modal-backdrop" id="modal-terms">
+<!-- ═══════════════ MODAL: TERMS & CONDITIONS ═══════════════ -->
+<div class="modal-backdrop" id="modal-terms" role="dialog" aria-modal="true" aria-labelledby="mt-title">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('terms')">✕</button>
-    <h2>Terms &amp; Conditions</h2>
+    <button class="modal-close" onclick="closeModal(event,'terms')" aria-label="Close">&#x2715;</button>
+    <h2 id="mt-title">Terms &amp; Conditions</h2>
     <p class="modal-date">Last updated: 25 June 2025</p>
-
     <h3>1. Acceptance of Terms</h3>
-    <p>By accessing and using this website, you confirm that you have read, understood, and agree to be bound by these Terms and Conditions. If you do not agree, please discontinue use of this website immediately.</p>
-
+    <p>By accessing and using this website, you confirm that you have read, understood, and agree to be bound by these Terms and Conditions. If you do not agree, please discontinue use immediately.</p>
     <h3>2. Nature of This Website</h3>
-    <p>This website is an informational and affiliate marketing page. It does not provide financial advice, investment recommendations, or brokerage services. All content is provided for general informational purposes only.</p>
-
+    <p>This website is an informational and affiliate marketing page. It does not provide financial advice, investment recommendations, or brokerage services. All content is for general informational purposes only.</p>
     <h3>3. Affiliate Disclosure</h3>
     <p>This website contains affiliate links. We may earn a commission if you click through our links and sign up with a partner platform. This comes at no additional cost to you. Our editorial content is not influenced by affiliate relationships.</p>
-
     <h3>4. No Financial Advice</h3>
     <p>Nothing on this website constitutes financial, investment, legal, or tax advice. You should conduct your own due diligence and consult a qualified financial adviser before making any financial decisions. Past performance is not indicative of future results.</p>
-
     <h3>5. Intellectual Property</h3>
     <p>All content on this website, including text, graphics, logos, and design elements, is the property of FinEdge Pro or its content suppliers and is protected by applicable intellectual property laws. You may not reproduce or distribute any content without prior written permission.</p>
-
     <h3>6. Limitation of Liability</h3>
-    <p>To the fullest extent permitted by applicable law, we shall not be liable for any direct, indirect, incidental, special, or consequential damages arising from your use of this website or any linked third-party services, even if we have been advised of the possibility of such damages.</p>
-
+    <p>To the fullest extent permitted by applicable law, we shall not be liable for any direct, indirect, incidental, special, or consequential damages arising from your use of this website or any linked third-party services.</p>
     <h3>7. Third-Party Websites</h3>
-    <p>This website links to third-party platforms. We have no control over those platforms and are not responsible for their content, privacy practices, or availability. Links do not imply endorsement of the linked site's content or services.</p>
-
+    <p>This website links to third-party platforms. We have no control over those platforms and are not responsible for their content, privacy practices, or availability. Links do not imply endorsement.</p>
     <h3>8. Changes to Terms</h3>
-    <p>We reserve the right to modify these Terms at any time. Changes will be effective immediately upon posting to the website. Your continued use of the website constitutes acceptance of the revised Terms.</p>
-
+    <p>We reserve the right to modify these Terms at any time. Changes will be effective immediately upon posting. Continued use of the website constitutes acceptance of the revised Terms.</p>
     <h3>9. Governing Law</h3>
-    <p>These Terms shall be governed by and construed in accordance with applicable laws. Any disputes shall be subject to the exclusive jurisdiction of the courts of the relevant jurisdiction.</p>
-
+    <p>These Terms shall be governed by applicable laws. Any disputes shall be subject to the exclusive jurisdiction of the courts of the relevant jurisdiction.</p>
     <div style="margin-top:28px; text-align:center;">
-      <button class="btn-primary" onclick="closeModal('terms')">I Agree</button>
+      <button class="btn-primary" onclick="closeModal(event,'terms')">I Agree</button>
     </div>
   </div>
 </div>
 
-<!-- DISCLAIMER -->
-<div class="modal-backdrop" id="modal-disclaimer">
+<!-- ═══════════════ MODAL: DISCLAIMER ═══════════════ -->
+<div class="modal-backdrop" id="modal-disclaimer" role="dialog" aria-modal="true" aria-labelledby="md-title">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('disclaimer')">✕</button>
-    <h2>Disclaimer</h2>
+    <button class="modal-close" onclick="closeModal(event,'disclaimer')" aria-label="Close">&#x2715;</button>
+    <h2 id="md-title">Disclaimer</h2>
     <p class="modal-date">Last updated: 25 June 2025</p>
-
     <h3>General Information Only</h3>
-    <p>The content published on this website is for general informational and promotional purposes only. It does not constitute professional financial, investment, legal, or regulatory advice. Nothing on this website should be interpreted as a solicitation or offer to buy or sell any financial instrument.</p>
-
+    <p>The content on this website is for general informational and promotional purposes only. It does not constitute professional financial, investment, legal, or regulatory advice. Nothing should be interpreted as a solicitation or offer to buy or sell any financial instrument.</p>
     <h3>Risk Warning</h3>
-    <p>Financial products, including but not limited to leveraged instruments, derivatives, and speculative assets, carry a significant degree of risk. You may lose some or all of your invested capital. Leveraged products may not be suitable for all individuals. Only risk capital you can afford to lose. Please ensure you fully understand the risks involved and seek independent advice if necessary.</p>
-
+    <p>Financial products, including leveraged instruments, derivatives, and speculative assets, carry a significant degree of risk. You may lose some or all of your invested capital. Only risk capital you can afford to lose. Please ensure you fully understand the risks involved and seek independent advice if necessary.</p>
     <h3>Affiliate Relationship</h3>
     <p>This website participates in affiliate programmes. We receive compensation from partner platforms when users sign up through our referral links. This does not affect the objectivity of information presented; however, readers should be aware of this commercial relationship.</p>
-
     <h3>Accuracy of Information</h3>
-    <p>While we endeavour to keep information accurate and up to date, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability of the information, products, or services contained on this website. Any reliance you place on such information is at your own risk.</p>
-
+    <p>While we endeavour to keep information accurate and up to date, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, or suitability of the information contained on this website. Any reliance you place on such information is at your own risk.</p>
     <h3>No Guarantee of Results</h3>
-    <p>Past performance data, testimonials, and user reviews displayed on this website are for illustrative purposes only. They are not indicative of future results. Individual results will vary based on personal circumstances and market conditions.</p>
-
+    <p>Past performance data, testimonials, and user reviews are for illustrative purposes only. They are not indicative of future results. Individual results will vary based on personal circumstances and market conditions.</p>
     <h3>Regulatory Compliance</h3>
-    <p>The platforms and services we reference are regulated by various financial authorities in their respective jurisdictions. It is your responsibility to ensure that using such services is legal in your country of residence. This website does not target users in jurisdictions where such promotion or use would be unlawful.</p>
-
+    <p>The platforms and services we reference are regulated by various financial authorities in their respective jurisdictions. It is your responsibility to ensure that using such services is legal in your country of residence.</p>
     <h3>Contact</h3>
     <p>For any questions relating to this Disclaimer, please reach out through the support channels listed on this website.</p>
-
     <div style="margin-top:28px; text-align:center;">
-      <button class="btn-primary" onclick="closeModal('disclaimer')">Understood</button>
+      <button class="btn-primary" onclick="closeModal(event,'disclaimer')">Understood</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════ JS ═══════════════ -->
+<!-- ═══════════════ JAVASCRIPT ═══════════════ -->
 <script>
-  /* ─── AFFILIATE REDIRECT ──────────────────────────────── */
-  function goToAffiliate(e) {
-    if (e) e.stopPropagation();
-    window.open(REDIRECT_URL, '_blank');
-  }
+/* ─── AFFILIATE REDIRECT ─── */
+function goToAffiliate() {
+  window.open(REDIRECT_URL, '_blank', 'noopener,noreferrer');
+}
 
-  /* ─── MODAL CONTROLS ─────────────────────────────────── */
-  function openModal(id) {
-    event.stopPropagation();
-    document.getElementById('modal-' + id).classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
+/* ─── MODAL: open ─── */
+function openModal(e, id) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  var modal = document.getElementById('modal-' + id);
+  if (!modal) return;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  /* Scroll modal to top every open — important on Mac Safari */
+  modal.scrollTop = 0;
+}
 
-  function closeModal(id) {
-    event.stopPropagation();
-    document.getElementById('modal-' + id).classList.remove('open');
+/* ─── MODAL: close ─── */
+function closeModal(e, id) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  var modal = document.getElementById('modal-' + id);
+  if (!modal) return;
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ─── Close modal on backdrop click ─── */
+var backdrops = document.querySelectorAll('.modal-backdrop');
+for (var i = 0; i < backdrops.length; i++) {
+  backdrops[i].addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    e.stopPropagation();
+  });
+}
+
+/* ─── Prevent modal-box clicks propagating up to backdrop ─── */
+var boxes = document.querySelectorAll('.modal-box');
+for (var j = 0; j < boxes.length; j++) {
+  boxes[j].addEventListener('click', function(e) { e.stopPropagation(); });
+}
+
+/* ─── ESC key closes modal ─── */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' || e.keyCode === 27) {
+    var open = document.querySelectorAll('.modal-backdrop.open');
+    for (var k = 0; k < open.length; k++) {
+      open[k].classList.remove('open');
+    }
     document.body.style.overflow = '';
   }
+});
 
-  // Close modal on backdrop click
-  document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
-    backdrop.addEventListener('click', function(e) {
-      if (e.target === this) {
-        this.classList.remove('open');
-        document.body.style.overflow = '';
-      }
-      e.stopPropagation();
-    });
-  });
-
-  // Prevent modal box clicks from closing
-  document.querySelectorAll('.modal-box').forEach(box => {
-    box.addEventListener('click', e => e.stopPropagation());
-  });
-
-  /* ─── SCROLL FADE-IN ─────────────────────────────────── */
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+/* ─── SCROLL FADE-IN (IntersectionObserver with fallback) ─── */
+if ('IntersectionObserver' in window) {
+  var fadeEls = document.querySelectorAll('.fade-up');
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
       }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.1 });
 
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-  /* ─── KEYBOARD: ESC closes modal ────────────────────── */
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      document.querySelectorAll('.modal-backdrop.open').forEach(m => {
-        m.classList.remove('open');
-        document.body.style.overflow = '';
-      });
-    }
-  });
+  fadeEls.forEach(function(el) { io.observe(el); });
+} else {
+  /* Fallback for older Safari / IE: show everything immediately */
+  var allFade = document.querySelectorAll('.fade-up');
+  for (var f = 0; f < allFade.length; f++) {
+    allFade[f].classList.add('visible');
+  }
+}
 </script>
 
 </body>
